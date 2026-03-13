@@ -1,12 +1,16 @@
+#pip install -r requirements.txt
 annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
 click==8.3.1
 colorama==0.4.6
-fastapi==0.135.0
+dotenv==0.9.9
+fastapi==0.135.1
 greenlet==3.3.2
 h11==0.16.0
 idna==3.11
+psycopg==3.3.3
+psycopg-binary==3.3.3
 pydantic==2.12.5
 pydantic-settings==2.13.1
 pydantic_core==2.41.5
@@ -15,4 +19,5 @@ SQLAlchemy==2.0.48
 starlette==0.52.1
 typing-inspection==0.4.2
 typing_extensions==4.15.0
+tzdata==2025.3
 uvicorn==0.41.0
