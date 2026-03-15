@@ -10,7 +10,7 @@
 
 ## 📖 About the Project
 
-This repository contains the backend infrastructure for **Erinaldo's Grocery Store**. It is designed as a practical learning experience, building a robust API from scratch using modern Python frameworks and database management practices.
+This repository contains the backend infrastructure for **Mercearia do Erinaldo**. It is designed as a practical learning experience, building a robust API from scratch using modern Python frameworks and database management practices.
 
 ## 🚀 Project Roadmap
 
