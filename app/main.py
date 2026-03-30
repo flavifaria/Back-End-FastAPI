@@ -8,7 +8,7 @@ from modules.auth.routers import router as auth_router
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="API - Mercearia do João")
+app = FastAPI(title="API - Mercearia do Erinaldo")
 app.include_router(users_router)
 app.include_router(auth_router)
 

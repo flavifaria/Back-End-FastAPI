@@ -13,7 +13,6 @@ from core.config import settings
 SQLALCHEMY_DATABASE_URL = settings.DATABASE_URL
 
 # connect_args={"check_same_thread": False} é específico para SQLite,
-# permitindo que mais de uma thread interaja com o banco (necessário para FastAPI).
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
 )
