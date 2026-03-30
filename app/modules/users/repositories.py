@@ -1,41 +1,39 @@
-"""
-Módulo de Repositório de Utilizadores.
-
-Este módulo implementa o padrão Repository para abstrair a camada de acesso a dados.
-Ele centraliza as operações de consulta e persistência relacionadas à entidade 'User',
-mantendo o código de acesso ao banco separado das regras de negócio.
-"""
+# app/modules/users/repositories.py
 
 from sqlalchemy.orm import Session
 from modules.users.models import User
 from modules.users.schemas import UserCreate
 
 class UserRepository:
-    """
-    Repositório para manipulação de dados de Utilizadores.
-
-    Gerencia as operações de CRUD (Create, Read, Update, Delete) para a tabela de utilizadores.
-    """
-
+    # Quando o Repository for chamado, ele precisa de receber uma sessão de base de dados aberta
     def __init__(self, db: Session):
         self.db = db
 
+    # Função para procurar um utilizador pelo email (útil para validar se o email já existe)
     def get_by_email(self, email: str):
+        # Vai à tabela User, filtra pelo email e devolve o primeiro resultado (ou None)
         return self.db.query(User).filter(User.email == email).first()
 
+    # Função para criar um novo utilizador
     def create(self, user_in: UserCreate):
+        # 1. Transformamos o "Schema" (dados recebidos) num "Model" (formato da base de dados)
+        # ATENÇÃO: Por agora, vamos guardar a password diretamente. 
+        # Na Semana 2 do plano de aulas, isto será substituído pelo hash gerado no security.py!
         db_user = User(
             nome=user_in.nome,
             email=user_in.email,
-            hashed_password=user_in.password,
+            hashed_password=user_in.password, # <- Alerta didático para os alunos!
             role=user_in.role
         )
         
-        # Adiciona o novo usuário à sessão do banco de dados para ser persistido
+        # 2. Adicionamos o novo utilizador à sessão atual
         self.db.add(db_user)
-        # Confirma as mudanças no banco de dados, executando a inserção
+        
+        # 3. Guardamos efetivamente na base de dados (o INSERT acontece aqui)
         self.db.commit()
-        # Atualiza o objeto db_user com os dados do banco (como o ID gerado automaticamente)
+        
+        # 4. Atualizamos o objeto com os dados gerados pela base de dados (ex: o 'id' que foi criado)
         self.db.refresh(db_user)
-        # Retorna o usuário recém-criado
+        
+        # 5. Devolvemos o utilizador criado
         return db_user
