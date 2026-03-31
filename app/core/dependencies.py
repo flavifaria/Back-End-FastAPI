@@ -20,31 +20,29 @@ def get_db():
     finally:
         db.close()
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
-    # Preparamos a mensagem de erro padrão caso ele seja barrado
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Não foi possível validar as credenciais (Token inválido ou expirado)",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    
-    try:
-        # Tentamos ler decodificar o JWT com a nossa chave secreta
-        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
-        
-        # Lembre-se que, no login, guardámos o email na variável "sub" (subject)
-        email: str = payload.get("sub")
-        if email is None:
-            raise credentials_exception
-            
-    except jwt.InvalidTokenError:
-        raise credentials_exception
-
+# 1. CORREÇÃO NO SEGURANÇA PRINCIPAL
+def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):    
     user_repo = UserRepository(db)
-    user = user_repo.get_by_email(email=email)
-    
+    user = user_repo.get_by_email(email=jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])["sub"])
+
     if user is None:
-        raise credentials_exception
-        
-    # Tudo certo!
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Utilizador não encontrado no banco de dados."
+        )
     return user
+
+
+# 2. CRIAÇÃO DO SEGURANÇA VIP (Apenas Gestor)
+def get_current_gestor(current_user = Depends(get_current_user)):
+    """Verifica se o utilizador autenticado tem o perfil de gestor."""
+    
+    if current_user.role != "gestor":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Acesso negado. Apenas gestores podem realizar esta ação."
+        )
+        
+    # ATENÇÃO: Devolvemos a variável correta (current_user)!
+    return current_user
+
