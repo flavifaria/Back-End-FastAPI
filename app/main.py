@@ -24,8 +24,6 @@ app.add_middleware(
 )
 # ----------------------------
 
-app.include_router(users_router)
-
 @app.get("/")
 def read_root():
     return {"mensagem": "API da Mercearia do Erinaldo está funcionando!"}
