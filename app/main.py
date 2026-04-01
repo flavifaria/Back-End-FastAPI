@@ -5,9 +5,13 @@ from modules.users import models
 from modules.users.routers import router as users_router
 from modules.auth.routers import router as auth_router
 
+
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="API - Mercearia do Erinaldo")
+app = FastAPI(title="API - Mercearia do João")
+app.include_router(users_router)
+app.include_router(auth_router)
+
 
 # --- CONFIGURAÇÃO DO CORS ---
 # Isto permite que a nossa página HTML local converse com a API
@@ -21,7 +25,6 @@ app.add_middleware(
 # ----------------------------
 
 app.include_router(users_router)
-app.include_router(auth_router)
 
 @app.get("/")
 def read_root():

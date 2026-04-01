@@ -1,5 +1,3 @@
-# app/modules/auth/routers.py
-
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
@@ -20,24 +18,18 @@ def get_db():
 
 @router.post("/login", response_model=Token)
 def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    
-    # 1. O OAuth2PasswordRequestForm guarda o email no campo 'username'
     user_repo = UserRepository(db)
+    # O form_data.username guarda o e-mail digitado no Swagger
     user = user_repo.get_by_email(email=form_data.username)
     
-    # 2. Verificamos se o utilizador existe E se a palavra-passe bate com o hash
+    # Valida se usuário existe E se a senha bate
     if not user or not verify_password(form_data.password, user.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Email ou palavra-passe incorretos",
-            headers={"WWW-Authenticate": "Bearer"},
+            detail="Email ou senha incorretos",
         )
     
-    # 3. Se passou na validação, criamos o Token (Crachá)
-    # Colocamos o email e o perfil (role) dentro do token para uso futuro
-    access_token = create_access_token(
-        data={"sub": user.email, "role": user.role}
-    )
+    # Cria o Token colocando o email e o perfil dentro dele
+    access_token = create_access_token(data={"sub": user.email, "role": user.role})
     
-    # 4. Devolvemos o Token ao cliente
     return {"access_token": access_token, "token_type": "bearer"}

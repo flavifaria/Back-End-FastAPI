@@ -22,4 +22,5 @@ class UserResponse(UserBase):
     id: int
     is_active: bool
 
+    # Configuração para permitir a criação a partir de objetos ORM (SQLAlchemy)
     model_config = ConfigDict(from_attributes=True)
