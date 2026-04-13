@@ -12,6 +12,7 @@
             --box-border: #45475a;
             --active-color: #a6e3a1;
             --error-color: #f38ba8;
+            --auth-color: #f9e2af;
             --postman-color: #ff6c37;
         }
 
@@ -26,46 +27,32 @@
             margin: 0;
         }
 
-        h1 {
-            color: #89b4fa;
-            margin-bottom: 5px;
-        }
-
-        p.subtitle {
-            margin-bottom: 30px;
-            color: #a6adc8;
-        }
+        h1 { color: #89b4fa; margin-bottom: 5px; text-align: center; }
+        p.subtitle { margin-bottom: 30px; color: #a6adc8; text-align: center;}
 
         .container {
             display: flex;
-            gap: 15px;
+            gap: 12px;
             align-items: center;
             flex-wrap: wrap;
             justify-content: center;
-            max-width: 1000px;
+            max-width: 1200px;
         }
 
         .layer {
             background-color: var(--box-bg);
             border: 2px solid var(--box-border);
-            border-radius: 10px;
-            padding: 20px;
-            width: 140px;
+            border-radius: 8px;
+            padding: 15px;
+            width: 130px;
             text-align: center;
             transition: all 0.3s ease;
             position: relative;
+            cursor: help; /* Muda o cursor para indicar que tem dica */
         }
 
-        .layer h3 {
-            margin: 0 0 10px 0;
-            font-size: 1.1rem;
-        }
-
-        .layer p {
-            font-size: 0.8rem;
-            margin: 0;
-            color: #bac2de;
-        }
+        .layer h3 { margin: 0 0 8px 0; font-size: 1rem; }
+        .layer p { font-size: 0.75rem; margin: 0; color: #bac2de; }
 
         .layer.active {
             border-color: var(--active-color);
@@ -73,41 +60,37 @@
             transform: translateY(-5px);
         }
 
-        /* Setas entre as caixas */
-        .arrow {
-            font-size: 1.5rem;
-            color: #6c7086;
+        /* Estilo específico para o Auth */
+        .layer#layer-auth.active {
+            border-color: var(--auth-color);
+            box-shadow: 0 0 15px rgba(249, 226, 175, 0.4);
         }
+
+        .arrow { font-size: 1.2rem; color: #6c7086; }
 
         .controls {
             margin-top: 40px;
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         button {
-            padding: 12px 24px;
-            font-size: 1rem;
+            padding: 10px 20px;
+            font-size: 0.95rem;
             font-weight: bold;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: opacity 0.2s;
         }
+        button:hover { opacity: 0.8; }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
 
-        #btn-success {
-            background-color: var(--postman-color);
-            color: white;
-        }
-        
-        #btn-success:hover { background-color: #e55b2b; }
-
-        #btn-error {
-            background-color: #45475a;
-            color: white;
-        }
-
-        #btn-error:hover { background-color: #585b70; }
+        #btn-success { background-color: var(--postman-color); color: white; }
+        #btn-error-schema { background-color: #585b70; color: white; }
+        #btn-error-auth { background-color: #eba0ac; color: #11111b; }
 
         .log-panel {
             margin-top: 30px;
@@ -117,66 +100,75 @@
             border-radius: 8px;
             padding: 15px;
             font-family: monospace;
-            min-height: 150px;
+            min-height: 200px;
+            max-height: 300px;
+            overflow-y: auto;
         }
 
-        .log-entry { margin: 5px 0; }
+        .log-entry { margin: 5px 0; font-size: 0.9rem; }
         .log-time { color: #f9e2af; margin-right: 10px; }
         .log-success { color: var(--active-color); }
         .log-error { color: var(--error-color); }
         .log-info { color: #89b4fa; }
+        .log-auth { color: var(--auth-color); }
 
     </style>
 </head>
 <body>
 
-    <h1>A Jornada da Requisição</h1>
-    <p class="subtitle">Simulador de Arquitetura em Camadas (FastAPI)</p>
+    <h1>A Jornada da Requisição (FastAPI)</h1>
+    <p class="subtitle">Passe o mouse sobre as caixas para ver a analogia do Restaurante.</p>
 
     <div class="container">
-        <div class="layer" id="layer-postman">
+        <div class="layer" id="layer-postman" title="O Cliente faminto.">
             <h3>Postman</h3>
-            <p>O Cliente</p>
+            <p>Cliente</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-router">
+        <div class="layer" id="layer-router" title="O Garçom: Anota o pedido e a mesa (URL e Método).">
             <h3>Router</h3>
-            <p>O Garçom (Recebe a Rota)</p>
+            <p>Endpoints</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-schema">
+        <div class="layer" id="layer-auth" title="O Recepcionista: Verifica se você tem reserva (Token JWT).">
+            <h3>Auth Guard</h3>
+            <p>Segurança / JWT</p>
+        </div>
+        <div class="arrow">→</div>
+        <div class="layer" id="layer-schema" title="Ficha do Pedido: Confere se não pediram algo impossível (ex: pizza de pneu).">
             <h3>Schema</h3>
-            <p>A Segurança (Pydantic)</p>
+            <p>Pydantic</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-controller">
+        <div class="layer" id="layer-controller" title="O Gerente: Organiza quem faz o que.">
             <h3>Controller</h3>
-            <p>O Gerente (Orquestra)</p>
+            <p>Orquestrador</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-service">
+        <div class="layer" id="layer-service" title="O Chef de Cozinha: Prepara o prato (regras de negócio).">
             <h3>Service</h3>
-            <p>O Cozinheiro (Regras)</p>
+            <p>Regras de Negócio</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-repository">
+        <div class="layer" id="layer-repository" title="O Estoquista: Pega os ingredientes no armazém.">
             <h3>Repository</h3>
-            <p>O Estoquista (SQL)</p>
+            <p>SQL / Queries</p>
         </div>
         <div class="arrow">→</div>
-        <div class="layer" id="layer-db">
+        <div class="layer" id="layer-db" title="O Armazém onde fica a comida.">
             <h3>Database</h3>
-            <p>Armazém (SQLite)</p>
+            <p>SQLite</p>
         </div>
     </div>
 
     <div class="controls">
-        <button id="btn-success" onclick="simularRequisicao('sucesso')">Enviar POST /produtos (Caminho Feliz)</button>
-        <button id="btn-error" onclick="simularRequisicao('erro')">Enviar POST /produtos (Preço = "Texto")</button>
+        <button id="btn-success" onclick="simularRequisicao('sucesso')">1. Rota Livre (POST /produtos)</button>
+        <button id="btn-error-schema" onclick="simularRequisicao('erro-schema')">2. Erro de Digitação (Preço em Texto)</button>
+        <button id="btn-error-auth" onclick="simularRequisicao('erro-auth')">3. Rota Protegida (GET /pedidos) S/ Token</button>
     </div>
 
     <div class="log-panel" id="log-panel">
-        <div class="log-entry"><span class="log-info">Sistema pronto. Aguardando requisições...</span></div>
+        <div class="log-entry"><span class="log-info">Sistema pronto. Servidor Uvicorn rodando...</span></div>
     </div>
 
     <script>
@@ -193,80 +185,88 @@
             document.querySelectorAll('.layer').forEach(el => {
                 el.classList.remove('active');
                 el.style.borderColor = 'var(--box-border)';
+                el.style.boxShadow = 'none';
             });
         }
 
-        function activateLayer(id, isError = false) {
+        function activateLayer(id, status = 'normal') {
             resetLayers();
             const el = document.getElementById(id);
             el.classList.add('active');
-            if (isError) {
+            
+            if (status === 'error') {
+                el.style.borderColor = 'var(--error-color)';
+                el.style.boxShadow = '0 0 15px rgba(243, 139, 168, 0.4)';
+            } else if (status === 'auth') {
                 el.style.borderColor = 'var(--error-color)';
                 el.style.boxShadow = '0 0 15px rgba(243, 139, 168, 0.4)';
             }
         }
 
         async function simularRequisicao(tipo) {
-            document.getElementById('log-panel').innerHTML = ''; // Limpa log
+            document.getElementById('log-panel').innerHTML = ''; 
             resetLayers();
             
-            const btn1 = document.getElementById('btn-success');
-            const btn2 = document.getElementById('btn-error');
-            btn1.disabled = true; btn2.disabled = true;
+            const botoes = document.querySelectorAll('button');
+            botoes.forEach(b => b.disabled = true);
 
             try {
-                addLog('Iniciando requisição POST /produtos...', 'log-info');
+                addLog(`Iniciando requisição...`, 'log-info');
                 activateLayer('layer-postman');
                 await sleep(800);
 
-                addLog('Router: Recebeu POST na rota /produtos. Encaminhando...', 'log-info');
                 activateLayer('layer-router');
+                addLog('Router: Requisição recebida e roteada.', 'log-info');
+                await sleep(800);
+
+                activateLayer('layer-auth');
+                if (tipo === 'erro-auth') {
+                    addLog('Auth Guard: Dependência de Token não encontrada (Bearer JWT Ausente).', 'log-error');
+                    addLog('Resposta: 401 Unauthorized devolvido ao Postman.', 'log-error');
+                    activateLayer('layer-auth', 'error');
+                    await sleep(1200);
+                    activateLayer('layer-postman', 'error');
+                    return;
+                }
+                addLog('Auth Guard: Rota pública ou Token válido. Permitindo acesso.', 'log-auth');
                 await sleep(800);
 
                 activateLayer('layer-schema');
-                if (tipo === 'erro') {
-                    addLog('Schema (Pydantic): ERRO DE VALIDAÇÃO! O campo "preco" deve ser um número, recebido string.', 'log-error');
+                if (tipo === 'erro-schema') {
+                    addLog('Schema (Pydantic): ERRO! Campo "preco" esperado Float, recebido String.', 'log-error');
                     addLog('Resposta: 422 Unprocessable Entity devolvido ao Postman.', 'log-error');
-                    activateLayer('layer-schema', true);
-                    await sleep(1000);
-                    activateLayer('layer-postman', true);
+                    activateLayer('layer-schema', 'error');
+                    await sleep(1200);
+                    activateLayer('layer-postman', 'error');
                     return;
                 }
-                addLog('Schema (Pydantic): JSON validado com sucesso. Tipos de dados corretos.', 'log-success');
+                addLog('Schema (Pydantic): Validação de dados OK.', 'log-success');
                 await sleep(800);
 
                 activateLayer('layer-controller');
-                addLog('Controller: Dados recebidos. Chamando o Service para criar produto.', 'log-info');
+                addLog('Controller: Invocando Service...', 'log-info');
                 await sleep(800);
 
                 activateLayer('layer-service');
-                addLog('Service: Aplicando regras de negócio. Produto válido. Solicitando salvamento.', 'log-info');
+                addLog('Service: Aplicando regras de negócio...', 'log-info');
                 await sleep(800);
 
                 activateLayer('layer-repository');
-                addLog('Repository: Montando instrução SQL: INSERT INTO produtos...', 'log-info');
+                addLog('Repository: Executando instrução SQL...', 'log-info');
                 await sleep(800);
 
                 activateLayer('layer-db');
-                addLog('Database: Dados gravados no disco (SQLite). ID = 1 gerado.', 'log-success');
+                addLog('Database: Transação concluída com sucesso.', 'log-success');
                 await sleep(1000);
 
-                // Caminho de volta
-                activateLayer('layer-repository');
-                await sleep(400);
-                activateLayer('layer-service');
-                await sleep(400);
-                activateLayer('layer-controller');
-                addLog('Controller: Preparando resposta (Response Model).', 'log-info');
-                await sleep(400);
-                
+                // Caminho de volta (Simplificado)
                 activateLayer('layer-postman');
-                addLog('Postman: Recebeu Resposta 201 Created com sucesso!', 'log-success');
+                addLog('Postman: Recebeu Resposta 200/201 OK!', 'log-success');
 
             } finally {
                 setTimeout(() => {
                     resetLayers();
-                    btn1.disabled = false; btn2.disabled = false;
+                    botoes.forEach(b => b.disabled = false);
                 }, 2000);
             }
         }
