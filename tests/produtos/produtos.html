@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Produtos - CEEP</title>
+</head>
+<body>
+    <nav>
+        <a href="usuarios.html">Gerenciar Usuários</a> | 
+        <a href="produtos.html">Gerenciar Produtos</a>
+    </nav>
+    <hr>
+
+    <h1>Módulo de Produtos (CRUD)</h1>
+
+    <h3>1. Novo Produto (POST)</h3>
+    <form id="formCriarProduto">
+        <input type="text" id="prodNome" placeholder="Nome" required>
+        <input type="number" id="prodPreco" placeholder="Preço" step="0.01" required>
+        <button type="submit">Criar Produto</button>
+    </form>
+    <p id="msgCriarProduto"></p>
+
+    <h3>2. Listar Produtos (GET)</h3>
+    <button id="btnListar">Buscar Todos os Produtos</button>
+    <ul id="listaProdutos"></ul>
+
+    <hr>
+
+    <h3>3. Atualizar Produto (PUT)</h3>
+    <form id="formAtualizarProduto">
+        <input type="number" id="upId" placeholder="ID do Produto" required>
+        <input type="text" id="upNome" placeholder="Novo Nome" required>
+        <input type="number" id="upPreco" placeholder="Novo Preço" step="0.01" required>
+        <button type="submit">Atualizar</button>
+    </form>
+    <p id="msgAtualizar"></p>
+
+    <h3>4. Deletar Produto (DELETE)</h3>
+    <form id="formDeletarProduto">
+        <input type="number" id="delId" placeholder="ID do Produto" required>
+        <button type="submit" style="color: red;">Deletar Produto</button>
+    </form>
+    <p id="msgDeletar"></p>
+
+    <script src="produtos.js"></script>
+</body>
+</html>
