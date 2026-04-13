@@ -1,381 +1,52 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simulador de Arquitetura de API - FastAPI</title>
-    <style>
-        :root {
-            --bg-color: #1e1e2e;
-            --text-color: #cdd6f4;
-            --box-bg: #313244;
-            --box-border: #45475a;
-            --active-color: #a6e3a1;
-            --error-color: #f38ba8;
-            --auth-color: #f9e2af;
-            --postman-color: #ff6c37;
-        }
+from fastapi import APIRouter, Depends, HTTPException, status
+from typing import List
+# Importe seus schemas e a função de autenticação do seu projeto
+from schemas import ProdutoCreate, ProdutoResponse, PedidoCreate, PedidoResponse
+# from auth import get_current_user  <-- Exemplo de onde viria sua autenticação
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 2rem;
-            margin: 0;
-        }
+router_produtos = APIRouter(prefix="/produtos", tags=["Produtos"])
+router_pedidos = APIRouter(prefix="/pedidos", tags=["Pedidos"])
 
-        h1 { color: #89b4fa; margin-bottom: 5px; text-align: center; }
-        p.subtitle { margin-bottom: 30px; color: #a6adc8; text-align: center;}
+# --- ROTA: CADASTRAR PRODUTO ---
+@router_produtos.post("/", response_model=ProdutoResponse, status_code=status.HTTP_201_CREATED)
+def cadastrar_produto(produto: ProdutoCreate):
+    """
+    Cadastra um novo produto no catálogo.
+    """
+    # Aqui entraria a chamada para o seu Controller/Service/Repository
+    # Exemplo: novo_produto = produto_service.criar(produto)
+    
+    # Simulação do retorno do banco de dados para o teste funcionar:
+    produto_salvo = {
+        "id": 1,
+        "nome": produto.nome,
+        "descricao": produto.descricao,
+        "preco": produto.preco,
+        "estoque": produto.estoque
+    }
+    return produto_salvo
 
-        .container {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: center;
-            max-width: 1200px;
-            margin-bottom: 20px;
-        }
 
-        .layer {
-            background-color: var(--box-bg);
-            border: 2px solid var(--box-border);
-            border-radius: 8px;
-            padding: 15px;
-            width: 130px;
-            text-align: center;
-            transition: all 0.3s ease;
-            position: relative;
-            cursor: help;
-        }
-
-        .layer h3 { margin: 0 0 8px 0; font-size: 1rem; }
-        .layer p.desc { font-size: 0.75rem; margin: 0; color: #bac2de; }
-
-        .layer.active {
-            border-color: var(--active-color);
-            box-shadow: 0 0 15px rgba(166, 227, 161, 0.4);
-            transform: translateY(-5px);
-        }
-
-        .layer#layer-auth.active {
-            border-color: var(--auth-color);
-            box-shadow: 0 0 15px rgba(249, 226, 175, 0.4);
-        }
-
-        /* CARD INFORMATIVO (O quadrado maior que aparece no hover) */
-        .info-card {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            bottom: 115%; /* Posiciona acima da caixa */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 260px;
-            background-color: #181825;
-            border: 1px solid #89b4fa;
-            border-radius: 8px;
-            padding: 15px;
-            z-index: 100;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.8);
-            transition: all 0.2s ease-in-out;
-            text-align: left;
-            pointer-events: none; /* Evita bugar o mouse */
-        }
-
-        /* Pequena seta apontando para baixo no card */
-        .info-card::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            margin-left: -8px;
-            border-width: 8px;
-            border-style: solid;
-            border-color: #89b4fa transparent transparent transparent;
-        }
-
-        .layer:hover .info-card {
-            visibility: visible;
-            opacity: 1;
-            bottom: 125%; /* Faz o card "subir" um pouquinho ao aparecer */
-        }
-
-        .info-card h4 { color: #f9e2af; margin: 0 0 5px 0; font-size: 1rem; }
-        .info-card .file-name { 
-            color: #a6e3a1; 
-            font-family: monospace; 
-            font-size: 0.85rem; 
-            margin-bottom: 8px; 
-            display: block; 
-            background: #313244;
-            padding: 2px 6px;
-            border-radius: 4px;
-            width: fit-content;
-        }
-        .info-card p { color: #cdd6f4; font-size: 0.85rem; line-height: 1.5; margin: 0; }
-        .info-card .analogia { color: #fab387; font-style: italic; margin-top: 8px; display: block;}
-
-        .arrow { font-size: 1.2rem; color: #6c7086; }
-
-        .controls {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        button {
-            padding: 10px 20px;
-            font-size: 0.95rem;
-            font-weight: bold;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: opacity 0.2s;
-        }
-        button:hover { opacity: 0.8; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        #btn-success { background-color: var(--postman-color); color: white; }
-        #btn-error-schema { background-color: #585b70; color: white; }
-        #btn-error-auth { background-color: #eba0ac; color: #11111b; }
-
-        .log-panel {
-            margin-top: 30px;
-            background-color: #11111b;
-            width: 100%;
-            max-width: 800px;
-            border-radius: 8px;
-            padding: 15px;
-            font-family: monospace;
-            min-height: 200px;
-            max-height: 300px;
-            overflow-y: auto;
-            border: 1px solid #313244;
-        }
-
-        .log-entry { margin: 5px 0; font-size: 0.9rem; }
-        .log-time { color: #f9e2af; margin-right: 10px; }
-        .log-success { color: var(--active-color); }
-        .log-error { color: var(--error-color); }
-        .log-info { color: #89b4fa; }
-        .log-auth { color: var(--auth-color); }
-
-    </style>
-</head>
-<body>
-
-    <h1>A Jornada da Requisição (FastAPI)</h1>
-    <p class="subtitle">Passe o mouse sobre as caixas para ver os detalhes de cada arquivo.</p>
-
-    <div class="container">
-        <div class="layer" id="layer-postman">
-            <h3>Postman</h3>
-            <p class="desc">Cliente</p>
-            <div class="info-card">
-                <h4>O Cliente (Front-end)</h4>
-                <span class="file-name">Ferramenta Externa</span>
-                <p>Simula um aplicativo ou site. É onde montamos o JSON, os Cabeçalhos (Headers) e enviamos a requisição HTTP (GET, POST).</p>
-                <span class="analogia">🍕 Analogia: O cliente faminto fazendo o pedido.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-router">
-            <h3>Router</h3>
-            <p class="desc">Endpoints</p>
-            <div class="info-card">
-                <h4>Roteador (Endpoints)</h4>
-                <span class="file-name">routers.py</span>
-                <p>A porta de entrada da API. Define as URLs (ex: /produtos) e os métodos. Recebe a chamada HTTP e direciona para a função certa.</p>
-                <span class="analogia">🍕 Analogia: O Garçom que anota o seu pedido e o número da sua mesa.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-auth">
-            <h3>Auth Guard</h3>
-            <p class="desc">Segurança / JWT</p>
-            <div class="info-card">
-                <h4>Guarda de Autenticação</h4>
-                <span class="file-name">auth.py / dependencies.py</span>
-                <p>Intercepta a requisição para extrair o Token JWT do cabeçalho. Verifica se o usuário está logado e tem permissão para continuar.</p>
-                <span class="analogia">🍕 Analogia: O Segurança da porta checando se seu nome está na lista de reservas.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-schema">
-            <h3>Schema</h3>
-            <p class="desc">Pydantic</p>
-            <div class="info-card">
-                <h4>Validação de Dados</h4>
-                <span class="file-name">schemas.py</span>
-                <p>Usa a biblioteca Pydantic para garantir que o formato do JSON está perfeito. Barra textos em campos de número (gera Erro 422).</p>
-                <span class="analogia">🍕 Analogia: O Fiscal conferindo se o pedido faz sentido (ex: barrar pizza de pneu).</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-controller">
-            <h3>Controller</h3>
-            <p class="desc">Orquestrador</p>
-            <div class="info-card">
-                <h4>Controlador</h4>
-                <span class="file-name">controllers.py</span>
-                <p>O cérebro do fluxo. Recebe os dados validados, aciona os Serviços necessários, junta as respostas e devolve para o Router enviar ao usuário.</p>
-                <span class="analogia">🍕 Analogia: O Gerente do salão que organiza quem vai fazer o quê.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-service">
-            <h3>Service</h3>
-            <p class="desc">Regras de Negócio</p>
-            <div class="info-card">
-                <h4>Regras de Negócio</h4>
-                <span class="file-name">services.py</span>
-                <p>Onde a mágica acontece. Faz cálculos, verifica lógicas complexas (ex: "tem saldo?"), dispara e-mails e processa as informações.</p>
-                <span class="analogia">🍕 Analogia: O Chef de Cozinha preparando a comida de fato.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-repository">
-            <h3>Repository</h3>
-            <p class="desc">SQL / Queries</p>
-            <div class="info-card">
-                <h4>Comunicação com o Banco</h4>
-                <span class="file-name">repositories.py</span>
-                <p>O único lugar que entende de Banco de Dados. Isola os comandos SQL ou ORM (ex: SQLAlchemy). Busca e salva as informações físicas.</p>
-                <span class="analogia">🍕 Analogia: O Estoquista que vai até o fundo buscar os ingredientes.</span>
-            </div>
-        </div>
-        <div class="arrow">→</div>
-
-        <div class="layer" id="layer-db">
-            <h3>Database</h3>
-            <p class="desc">SQLite</p>
-            <div class="info-card">
-                <h4>Banco de Dados</h4>
-                <span class="file-name">banco.db / database.py</span>
-                <p>A memória permanente da aplicação. É onde as tabelas vivem e os registros (usuários, produtos) ficam salvos no disco.</p>
-                <span class="analogia">🍕 Analogia: O Armazém ou despensa do restaurante.</span>
-            </div>
-        </div>
-    </div>
-
-    <div class="controls">
-        <button id="btn-success" onclick="simularRequisicao('sucesso')">1. Rota Livre (POST /produtos)</button>
-        <button id="btn-error-schema" onclick="simularRequisicao('erro-schema')">2. Erro de Digitação (Preço em Texto)</button>
-        <button id="btn-error-auth" onclick="simularRequisicao('erro-auth')">3. Rota Protegida (GET /pedidos) S/ Token</button>
-    </div>
-
-    <div class="log-panel" id="log-panel">
-        <div class="log-entry"><span class="log-info">Sistema pronto. Servidor Uvicorn rodando...</span></div>
-    </div>
-
-    <script>
-        const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
-
-        function addLog(message, type = 'log-info') {
-            const panel = document.getElementById('log-panel');
-            const time = new Date().toLocaleTimeString();
-            panel.innerHTML += `<div class="log-entry"><span class="log-time">[${time}]</span> <span class="${type}">${message}</span></div>`;
-            panel.scrollTop = panel.scrollHeight;
-        }
-
-        function resetLayers() {
-            document.querySelectorAll('.layer').forEach(el => {
-                el.classList.remove('active');
-                el.style.borderColor = 'var(--box-border)';
-                el.style.boxShadow = 'none';
-            });
-        }
-
-        function activateLayer(id, status = 'normal') {
-            resetLayers();
-            const el = document.getElementById(id);
-            el.classList.add('active');
-            
-            if (status === 'error' || status === 'auth') {
-                el.style.borderColor = 'var(--error-color)';
-                el.style.boxShadow = '0 0 15px rgba(243, 139, 168, 0.4)';
-            }
-        }
-
-        async function simularRequisicao(tipo) {
-            document.getElementById('log-panel').innerHTML = ''; 
-            resetLayers();
-            
-            const botoes = document.querySelectorAll('button');
-            botoes.forEach(b => b.disabled = true);
-
-            try {
-                addLog(`Iniciando requisição...`, 'log-info');
-                activateLayer('layer-postman');
-                await sleep(800);
-
-                activateLayer('layer-router');
-                addLog('Router: Requisição recebida e roteada.', 'log-info');
-                await sleep(800);
-
-                activateLayer('layer-auth');
-                if (tipo === 'erro-auth') {
-                    addLog('Auth Guard: Dependência de Token não encontrada (Bearer JWT Ausente).', 'log-error');
-                    addLog('Resposta: 401 Unauthorized devolvido ao Postman.', 'log-error');
-                    activateLayer('layer-auth', 'error');
-                    await sleep(1200);
-                    activateLayer('layer-postman', 'error');
-                    return;
-                }
-                addLog('Auth Guard: Rota pública ou Token válido. Permitindo acesso.', 'log-auth');
-                await sleep(800);
-
-                activateLayer('layer-schema');
-                if (tipo === 'erro-schema') {
-                    addLog('Schema (Pydantic): ERRO! Campo "preco" esperado Float, recebido String.', 'log-error');
-                    addLog('Resposta: 422 Unprocessable Entity devolvido ao Postman.', 'log-error');
-                    activateLayer('layer-schema', 'error');
-                    await sleep(1200);
-                    activateLayer('layer-postman', 'error');
-                    return;
-                }
-                addLog('Schema (Pydantic): Validação de dados OK.', 'log-success');
-                await sleep(800);
-
-                activateLayer('layer-controller');
-                addLog('Controller: Invocando Service...', 'log-info');
-                await sleep(800);
-
-                activateLayer('layer-service');
-                addLog('Service: Aplicando regras de negócio...', 'log-info');
-                await sleep(800);
-
-                activateLayer('layer-repository');
-                addLog('Repository: Executando instrução SQL...', 'log-info');
-                await sleep(800);
-
-                activateLayer('layer-db');
-                addLog('Database: Transação concluída com sucesso.', 'log-success');
-                await sleep(1000);
-
-                // Caminho de volta
-                activateLayer('layer-postman');
-                addLog('Postman: Recebeu Resposta 200/201 OK!', 'log-success');
-
-            } finally {
-                setTimeout(() => {
-                    resetLayers();
-                    botoes.forEach(b => b.disabled = false);
-                }, 2000);
-            }
-        }
-    </script>
-</body>
-</html>
+# --- ROTA: CRIAR PEDIDO (Protegida) ---
+@router_pedidos.post("/", response_model=PedidoResponse, status_code=status.HTTP_201_CREATED)
+def criar_pedido(
+    pedido: PedidoCreate, 
+    # current_user = Depends(get_current_user) <-- A MÁGICA DA AUTENTICAÇÃO AQUI
+):
+    """
+    Cria um novo pedido para o usuário logado. Exige Token JWT.
+    """
+    # Validações de negócio (Services) entrariam aqui:
+    # 1. Verificar se os produtos existem.
+    # 2. Verificar se tem estoque.
+    # 3. Calcular o total.
+    
+    # Simulação do retorno:
+    pedido_salvo = {
+        "id": 1001,
+        "usuario_id": 99, # Viria do current_user.id
+        "data_pedido": "2026-04-13T20:30:00",
+        "status": "Aguardando Pagamento",
+        "total": 250.50
+    }
+    return pedido_salvo
