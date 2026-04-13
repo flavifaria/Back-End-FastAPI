@@ -14,6 +14,7 @@
             --error-color: #f38ba8;
             --auth-color: #f9e2af;
             --postman-color: #ff6c37;
+            --success-btn: #a6e3a1;
         }
 
         body {
@@ -66,12 +67,12 @@
             box-shadow: 0 0 15px rgba(249, 226, 175, 0.4);
         }
 
-        /* CARD INFORMATIVO (O quadrado maior que aparece no hover) */
+        /* CARD INFORMATIVO */
         .info-card {
             visibility: hidden;
             opacity: 0;
             position: absolute;
-            bottom: 115%; /* Posiciona acima da caixa */
+            bottom: 115%;
             left: 50%;
             transform: translateX(-50%);
             width: 260px;
@@ -83,10 +84,9 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.8);
             transition: all 0.2s ease-in-out;
             text-align: left;
-            pointer-events: none; /* Evita bugar o mouse */
+            pointer-events: none;
         }
 
-        /* Pequena seta apontando para baixo no card */
         .info-card::after {
             content: "";
             position: absolute;
@@ -101,7 +101,7 @@
         .layer:hover .info-card {
             visibility: visible;
             opacity: 1;
-            bottom: 125%; /* Faz o card "subir" um pouquinho ao aparecer */
+            bottom: 125%;
         }
 
         .info-card h4 { color: #f9e2af; margin: 0 0 5px 0; font-size: 1rem; }
@@ -122,28 +122,30 @@
         .arrow { font-size: 1.2rem; color: #6c7086; }
 
         .controls {
-            margin-top: 30px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            justify-content: center;
+            margin-top: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            max-width: 800px;
+            width: 100%;
         }
 
         button {
-            padding: 10px 20px;
+            padding: 12px 20px;
             font-size: 0.95rem;
             font-weight: bold;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.1s;
         }
-        button:hover { opacity: 0.8; }
-        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button:hover { opacity: 0.9; transform: scale(1.02); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-        #btn-success { background-color: var(--postman-color); color: white; }
-        #btn-error-schema { background-color: #585b70; color: white; }
-        #btn-error-auth { background-color: #eba0ac; color: #11111b; }
+        #btn-prod-ok { background-color: var(--postman-color); color: white; }
+        #btn-prod-err { background-color: #585b70; color: white; }
+        #btn-ped-err { background-color: #eba0ac; color: #11111b; }
+        #btn-ped-ok { background-color: var(--success-btn); color: #11111b; }
 
         .log-panel {
             margin-top: 30px;
@@ -153,7 +155,7 @@
             border-radius: 8px;
             padding: 15px;
             font-family: monospace;
-            min-height: 200px;
+            min-height: 250px;
             max-height: 300px;
             overflow-y: auto;
             border: 1px solid #313244;
@@ -180,7 +182,7 @@
             <div class="info-card">
                 <h4>O Cliente (Front-end)</h4>
                 <span class="file-name">Ferramenta Externa</span>
-                <p>Simula um aplicativo ou site. É onde montamos o JSON, os Cabeçalhos (Headers) e enviamos a requisição HTTP (GET, POST).</p>
+                <p>Onde montamos o JSON, Headers e enviamos a requisição (GET, POST).</p>
                 <span class="analogia">🍕 Analogia: O cliente faminto fazendo o pedido.</span>
             </div>
         </div>
@@ -192,8 +194,8 @@
             <div class="info-card">
                 <h4>Roteador (Endpoints)</h4>
                 <span class="file-name">routers.py</span>
-                <p>A porta de entrada da API. Define as URLs (ex: /produtos) e os métodos. Recebe a chamada HTTP e direciona para a função certa.</p>
-                <span class="analogia">🍕 Analogia: O Garçom que anota o seu pedido e o número da sua mesa.</span>
+                <p>Define as URLs (ex: /produtos) e os métodos. Direciona a chamada para a função certa.</p>
+                <span class="analogia">🍕 Analogia: O Garçom que anota o seu pedido.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -203,9 +205,9 @@
             <p class="desc">Segurança / JWT</p>
             <div class="info-card">
                 <h4>Guarda de Autenticação</h4>
-                <span class="file-name">auth.py / dependencies.py</span>
-                <p>Intercepta a requisição para extrair o Token JWT do cabeçalho. Verifica se o usuário está logado e tem permissão para continuar.</p>
-                <span class="analogia">🍕 Analogia: O Segurança da porta checando se seu nome está na lista de reservas.</span>
+                <span class="file-name">auth.py</span>
+                <p>Extrai o Token JWT do cabeçalho. Verifica se o usuário está logado e tem permissão.</p>
+                <span class="analogia">🍕 Analogia: O Segurança checando a lista de reservas.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -216,8 +218,8 @@
             <div class="info-card">
                 <h4>Validação de Dados</h4>
                 <span class="file-name">schemas.py</span>
-                <p>Usa a biblioteca Pydantic para garantir que o formato do JSON está perfeito. Barra textos em campos de número (gera Erro 422).</p>
-                <span class="analogia">🍕 Analogia: O Fiscal conferindo se o pedido faz sentido (ex: barrar pizza de pneu).</span>
+                <p>Garante que o JSON está perfeito. Barra textos em campos de número (Erro 422).</p>
+                <span class="analogia">🍕 Analogia: O Fiscal conferindo a ficha do pedido.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -228,8 +230,8 @@
             <div class="info-card">
                 <h4>Controlador</h4>
                 <span class="file-name">controllers.py</span>
-                <p>O cérebro do fluxo. Recebe os dados validados, aciona os Serviços necessários, junta as respostas e devolve para o Router enviar ao usuário.</p>
-                <span class="analogia">🍕 Analogia: O Gerente do salão que organiza quem vai fazer o quê.</span>
+                <p>Recebe os dados validados e aciona os Serviços necessários.</p>
+                <span class="analogia">🍕 Analogia: O Gerente do salão organizando a equipe.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -240,8 +242,8 @@
             <div class="info-card">
                 <h4>Regras de Negócio</h4>
                 <span class="file-name">services.py</span>
-                <p>Onde a mágica acontece. Faz cálculos, verifica lógicas complexas (ex: "tem saldo?"), dispara e-mails e processa as informações.</p>
-                <span class="analogia">🍕 Analogia: O Chef de Cozinha preparando a comida de fato.</span>
+                <p>Onde a mágica acontece. Calcula totais, verifica estoque e processa lógica.</p>
+                <span class="analogia">🍕 Analogia: O Chef de Cozinha preparando a comida.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -252,8 +254,8 @@
             <div class="info-card">
                 <h4>Comunicação com o Banco</h4>
                 <span class="file-name">repositories.py</span>
-                <p>O único lugar que entende de Banco de Dados. Isola os comandos SQL ou ORM (ex: SQLAlchemy). Busca e salva as informações físicas.</p>
-                <span class="analogia">🍕 Analogia: O Estoquista que vai até o fundo buscar os ingredientes.</span>
+                <p>Isola os comandos SQL (SQLAlchemy). Busca e salva as informações físicas.</p>
+                <span class="analogia">🍕 Analogia: O Estoquista buscando os ingredientes.</span>
             </div>
         </div>
         <div class="arrow">→</div>
@@ -263,17 +265,18 @@
             <p class="desc">SQLite</p>
             <div class="info-card">
                 <h4>Banco de Dados</h4>
-                <span class="file-name">banco.db / database.py</span>
-                <p>A memória permanente da aplicação. É onde as tabelas vivem e os registros (usuários, produtos) ficam salvos no disco.</p>
-                <span class="analogia">🍕 Analogia: O Armazém ou despensa do restaurante.</span>
+                <span class="file-name">database.py</span>
+                <p>A memória permanente. Onde usuários, produtos e pedidos ficam salvos no disco.</p>
+                <span class="analogia">🍕 Analogia: O Armazém do restaurante.</span>
             </div>
         </div>
     </div>
 
     <div class="controls">
-        <button id="btn-success" onclick="simularRequisicao('sucesso')">1. Rota Livre (POST /produtos)</button>
-        <button id="btn-error-schema" onclick="simularRequisicao('erro-schema')">2. Erro de Digitação (Preço em Texto)</button>
-        <button id="btn-error-auth" onclick="simularRequisicao('erro-auth')">3. Rota Protegida (GET /pedidos) S/ Token</button>
+        <button id="btn-prod-ok" onclick="simularRequisicao('prod-ok')">1. POST /produtos (Caminho Feliz)</button>
+        <button id="btn-prod-err" onclick="simularRequisicao('prod-err')">2. POST /produtos (Erro Schema 422)</button>
+        <button id="btn-ped-err" onclick="simularRequisicao('ped-err')">3. POST /pedidos (S/ Token - Erro 401)</button>
+        <button id="btn-ped-ok" onclick="simularRequisicao('ped-ok')">4. POST /pedidos (C/ Token - Sucesso)</button>
     </div>
 
     <div class="log-panel" id="log-panel">
@@ -317,57 +320,80 @@
             botoes.forEach(b => b.disabled = true);
 
             try {
-                addLog(`Iniciando requisição...`, 'log-info');
+                if(tipo.includes('prod')) {
+                    addLog(`Iniciando requisição POST /produtos (Cadastro de Produto)...`, 'log-info');
+                } else {
+                    addLog(`Iniciando requisição POST /pedidos (Criar Pedido)...`, 'log-info');
+                }
+                
                 activateLayer('layer-postman');
                 await sleep(800);
 
                 activateLayer('layer-router');
-                addLog('Router: Requisição recebida e roteada.', 'log-info');
+                addLog('Router: Requisição recebida. Roteando para a função correta.', 'log-info');
                 await sleep(800);
 
+                // --- ETAPA DE AUTENTICAÇÃO ---
                 activateLayer('layer-auth');
-                if (tipo === 'erro-auth') {
+                if (tipo === 'ped-err') {
                     addLog('Auth Guard: Dependência de Token não encontrada (Bearer JWT Ausente).', 'log-error');
                     addLog('Resposta: 401 Unauthorized devolvido ao Postman.', 'log-error');
                     activateLayer('layer-auth', 'error');
                     await sleep(1200);
                     activateLayer('layer-postman', 'error');
                     return;
+                } else if (tipo === 'ped-ok') {
+                    addLog('Auth Guard: Token JWT recebido. Usuário ID: 99 autenticado com sucesso!', 'log-auth');
+                    await sleep(800);
+                } else {
+                    addLog('Auth Guard: Rota de cadastro de produto aberta (ou acesso Admin liberado).', 'log-auth');
+                    await sleep(800);
                 }
-                addLog('Auth Guard: Rota pública ou Token válido. Permitindo acesso.', 'log-auth');
-                await sleep(800);
 
+                // --- ETAPA DE SCHEMA ---
                 activateLayer('layer-schema');
-                if (tipo === 'erro-schema') {
-                    addLog('Schema (Pydantic): ERRO! Campo "preco" esperado Float, recebido String.', 'log-error');
+                if (tipo === 'prod-err') {
+                    addLog('Schema (Pydantic): ERRO! Campo "preco" exigia Float (>0), porém recebeu uma String.', 'log-error');
                     addLog('Resposta: 422 Unprocessable Entity devolvido ao Postman.', 'log-error');
                     activateLayer('layer-schema', 'error');
                     await sleep(1200);
                     activateLayer('layer-postman', 'error');
                     return;
                 }
-                addLog('Schema (Pydantic): Validação de dados OK.', 'log-success');
+                addLog('Schema (Pydantic): O JSON recebido está perfeito e atende às regras.', 'log-success');
                 await sleep(800);
 
+                // --- ETAPA DE CONTROLLER ---
                 activateLayer('layer-controller');
-                addLog('Controller: Invocando Service...', 'log-info');
+                addLog('Controller: Invocando as regras de negócio no Service...', 'log-info');
                 await sleep(800);
 
+                // --- ETAPA DE SERVICE ---
                 activateLayer('layer-service');
-                addLog('Service: Aplicando regras de negócio...', 'log-info');
-                await sleep(800);
+                if (tipo === 'ped-ok') {
+                    addLog('Service: Verificando estoque dos produtos e calculando o valor total do pedido...', 'log-info');
+                } else {
+                    addLog('Service: Preparando dados do novo produto para gravação...', 'log-info');
+                }
+                await sleep(1000);
 
+                // --- ETAPA DE REPOSITORY ---
                 activateLayer('layer-repository');
-                addLog('Repository: Executando instrução SQL...', 'log-info');
+                addLog('Repository: Montando as queries SQL (SQLAlchemy)...', 'log-info');
                 await sleep(800);
 
+                // --- ETAPA DE DATABASE ---
                 activateLayer('layer-db');
-                addLog('Database: Transação concluída com sucesso.', 'log-success');
+                if (tipo === 'ped-ok') {
+                    addLog('Database: Novo Pedido #1001 gravado no SQLite.', 'log-success');
+                } else {
+                    addLog('Database: Novo Produto salvo no SQLite. ID gerado.', 'log-success');
+                }
                 await sleep(1000);
 
                 // Caminho de volta
                 activateLayer('layer-postman');
-                addLog('Postman: Recebeu Resposta 200/201 OK!', 'log-success');
+                addLog('Postman: Resposta 201 Created recebida com sucesso! (Fim)', 'log-success');
 
             } finally {
                 setTimeout(() => {
