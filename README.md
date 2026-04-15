@@ -218,6 +218,17 @@ Router (HTTP) → Service (Regras de Negócio) → Repository (Acesso a Dados) �
 | `preço` | Float | - |
 | `estoque` | Integer | Default = `0` |
 
+
+### Tabela `pedidos`
+
+| Coluna | Tipo | Constraint |
+|---|---|---|
+| `id` | Integer | Primary Key, Index |
+| `user_id` | String | Index |
+| `status` | String | Nullable |
+| `observações` | Float | - |
+| `criado_em` | Integer | Default = `0` |
+
 ### Configuração
 
 As definições de conexão estão em `core/config.py` e podem ser sobrescritas via ficheiro `.env`:
