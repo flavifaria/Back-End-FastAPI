@@ -2,6 +2,7 @@ annotated-doc==0.0.4
 annotated-types==0.7.0
 anyio==4.12.1
 bcrypt==3.2.2
+certifi==2026.2.25
 cffi==2.0.0
 click==8.3.1
 colorama==0.4.6
@@ -11,8 +12,13 @@ email-validator==2.3.0
 fastapi==0.135.1
 greenlet==3.3.2
 h11==0.16.0
+httpcore==1.0.9
+httpx==0.28.1
 idna==3.11
+iniconfig==2.3.0
+packaging==26.1
 passlib==1.7.4
+pluggy==1.6.0
 psycopg==3.3.3
 psycopg-binary==3.3.3
 psycopg2-binary==2.9.11
@@ -20,7 +26,9 @@ pycparser==3.0
 pydantic==2.12.5
 pydantic-settings==2.13.1
 pydantic_core==2.41.5
+Pygments==2.20.0
 PyJWT==2.12.1
+pytest==9.0.3
 python-dotenv==1.2.2
 python-multipart==0.0.22
 SQLAlchemy==2.0.48

@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from modules.products.models import Produto as ProdutoModel
+from modules.products.models import ProdutoModel
 from modules.products.schemas import ProdutoCreate, ProdutoUpdate
 
 class ProdutoRepository:

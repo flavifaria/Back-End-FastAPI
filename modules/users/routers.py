@@ -4,7 +4,7 @@ from core.database import SessionLocal
 from modules.users.schemas import UserCreate, UserResponse
 from modules.users.services import UserService
 
-from core.dependences import get_current_user ,get_current_gestor
+from core.dependencies import get_current_user ,get_current_gestor
 from modules.users.models import User
 
 

@@ -29,7 +29,7 @@ class UserRepository:
         
         # 2. Se encontrar, fazemos o "Soft Delete" (inativamos)
         if user:
-            user.is_active = False # type: ignore
+            user.is_active = False
             self.db.commit() # Salva a alteração
             self.db.refresh(user)
             
