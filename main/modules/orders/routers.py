@@ -41,5 +41,5 @@ def cancelar_pedido(
     db: Session = Depends(get_db), 
     current_user = Depends(get_current_user)
 ):
-    return services.cancelar_pedido(db, order_id)
+    return services.cancelar_pedido(db, order_id, current_user.id)
 
