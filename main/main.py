@@ -3,6 +3,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware # NOVO IMPORT
 from core.database import engine, Base
 from modules.users import models
+from modules.products import models as product_models
+from modules.orders import models as order_models
+from modules.products import history_models
 from modules.users.routers import router as users_router
 from modules.auth.routers import router as auth_router
 from modules.products.routers import router as products_router
