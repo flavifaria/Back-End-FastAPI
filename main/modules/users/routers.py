@@ -41,6 +41,6 @@ def apagar_usuario(
     Apenas utilizadores com o perfil 'gestor' conseguem chegar a esta linha.
     """
     service = UserService(db)
-    service.delete_user(user_id)
+    service.delete_user(user_id, current_user.id, current_user.role)
     
     return None

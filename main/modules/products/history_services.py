@@ -1,4 +1,5 @@
 from modules.products.history_models import ProductPriceHistory, ProductStockHistory
+from fastapi import HTTPException
 
 
 def register_price_change(db, product, new_price: float, reason: str | None = None):
@@ -26,6 +27,8 @@ def register_stock_movement(
 ):
     old_stock = product.estoque
     new_stock = old_stock + movement
+    if new_stock < 0:
+        raise HTTPException(status_code=400, detail=f"Estoque não pode ficar negativo para o produto {product.nome}.")
 
     db.add(
         ProductStockHistory(

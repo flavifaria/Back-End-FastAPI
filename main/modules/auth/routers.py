@@ -28,6 +28,11 @@ def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depend
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Email ou senha incorretos",
         )
+    if not user.is_active:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Utilizador inativo",
+        )
     
     # Cria o Token colocando o email e o perfil dentro dele
     access_token = create_access_token(data={"sub": user.email, "role": user.role})

@@ -23,7 +23,12 @@ class UserService:
         
         return self.repository.create(user_in)
 
-    def delete_user(self, user_id: int):
+    def delete_user(self, user_id: int, current_user_id: int, current_user_role: str):
+            if user_id == current_user_id and current_user_role in ("gestor", "admin"):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Administrador não pode se autoexcluir."
+                )
             # Manda o repositório apagar
             deleted_user = self.repository.delete(user_id)
             
