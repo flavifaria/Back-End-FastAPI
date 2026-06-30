@@ -28,7 +28,6 @@ pydantic-settings==2.13.1
 pydantic_core==2.41.5
 Pygments==2.20.0
 PyJWT==2.12.1
-pytest==9.0.3
 python-dotenv==1.2.2
 python-multipart==0.0.22
 SQLAlchemy==2.0.48
