@@ -1,4 +1,4 @@
-# API - Mercearia 
+# API - Mercearia do Erinaldo
 
 API RESTful para gestão de uma mercearia, construída com **FastAPI**, **SQLAlchemy** e **SQLite**.
 
