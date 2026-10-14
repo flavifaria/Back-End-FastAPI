@@ -1,0 +1,22 @@
+# === Core da API e Servidor ===
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+gunicorn>=22.0.0
+python-multipart>=0.0.9
+
+# === Banco de Dados e ORM (core/database.py e models.py) ===
+sqlalchemy>=2.0.30
+
+# === Validação de Dados e Configurações (schemas.py e core/config.py) ===
+pydantic[email]>=2.9.0
+pydantic-settings>=2.5.0
+python-dotenv>=1.0.1
+
+# === Autenticação e Segurança (core/security.py e modules/auth) ===
+pyjwt>=2.9.0
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+bcrypt>=4.0.1
+
+# === Compilação e Empacotamento no Linux ===
+pyinstaller>=6.10.0

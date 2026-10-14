@@ -1,0 +1,19 @@
+# Cache do Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Ambiente Virtual
+venv/
+.venv/
+env/
+
+# Arquivos gerados pela compilação no Linux (PyInstaller)
+build/
+dist/
+*.spec
+
+# Banco de dados local e variáveis de ambiente (Opcional: remova mercearia.db daqui se quiser versioná-lo)
+*.db
+*.sqlite3
+.env
